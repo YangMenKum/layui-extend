@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width =device-width, initial-scale=1, maximum-scale=1" />
+    <title></title>
+    <meta charset="utf-8" />
+    <!--layui的css-->
+    <link href="layui/css/layui.css" rel="stylesheet" />
+    <style type="text/css">
+        form {
+            width: 500px;
+            margin: 10px auto;
+        }
+
+        h1, h2, h3 {
+            padding: 10px 0;
+        } 
+
+        a {
+            text-align: right;
+            font-size: 18px;
+            color: #1C86EE;
+        }
+
+        .xtree_contianer {
+            width: 500px;
+            border: 1px solid #9C9C9C;
+            overflow: auto;
+            margin-bottom: 30px;
+            background-color: #fff;
+            padding: 10px 0 25px 5px;
+        }
+
+        .div-btns {
+            margin: 20px 0;
+        }
+
+        .layui-form-label {
+            width: 60px !important;
+        }
+    </style>
+</head>
+<body>
+    <!--别忘记form 以及form的class-->
+    <form class="layui-form">
+        <h1>Layui - Xtree 3.0 </h1>
+        <h3>基于layui form模块的一款带复选框的树型插件</h3>
+        <div id="xtree1" class="xtree_contianer"></div>
+        <div id="xtree2" class="xtree_contianer"></div>
+    </form>
+    <button onclick="getChecked('xtree2')">console</button>
+
+</body>
+</html>
+<!--先引用layui的js-->
+<script src="layui/layui.js"></script>
+<!--引用xtree-->
+<script type="text/javascript">
+    /*测试数据*/
+    var demoData = [
+        {
+            menueCode: 'code1',
+            checked: true,
+            value: 'value1',
+            children: []
+        }, {
+            menueCode: 'code2',
+            checked: true,
+            value: 'value2',
+            children: [{
+                menueCode: 'code2.1',
+                checked: false,
+                value: 'value2.1',
+                children: []
+            }]
+        }];
+    /*键值对映射*/
+    var demoMap = {
+        'menueCode': 'title',
+        'checked': 'checked',
+        'value': 'value',
+        'children': 'data'
+    };
+    //一套json数据下面会使用，同时供你参考
+    var json = [
+            {
+                title: "节点1", value: "jd1", data: [
+                  { title: "节点1.1", checked: true, disabled: true, value: "jd1.1", data: [] }
+                , { title: "节点1.2", value: "jd1.2", checked: true, data: [] }
+                , { title: "节点1.3", value: "jd1.3", disabled: true, data: [] }
+                , { title: "节点1.4", value: "jd1.4", data: [] }
+                ]
+            }
+            , {
+                title: "节点2", value: "jd2", data: [
+                  { title: "节点2.1", value: "jd2.1", data: [] }
+                , { title: "节点2.2", value: "jd2.2", data: [] }
+                , { title: "节点2.3", value: "jd2.3", data: [] }
+                , { title: "节点2.4", value: "jd2.4", data: [] }
+                ]
+            }
+            , { title: "节点3", value: "jd3", data: [] }
+            , { title: "节点4", value: "jd4", data: [] }
+    ];
+
+    //********************
+    //      正式开始
+    //********************
+    layui.extend({
+        xtree: './layui-xtree/layui-xtree' // {/}的意思即代表采用自有路径，即不跟随 base 路径
+    })
+    //layui 的 form 模块是必须的
+    layui.use(['form','xtree'], function () {
+        var form = layui.form;
+
+        //1、最基础的用法 - 直接绑定json
+        var xtree1 = layui.xtree({
+            elem: 'xtree1'   //(必填) 放置xtree的容器，样式参照 .xtree_contianer
+            , form: form     //(必填) layui 的 from
+            , data: json     //(必填) json数据
+        });
+        var xtree2 = layui.xtree({
+            elem: 'xtree2'   //(必填) 放置xtree的容器，样式参照 .xtree_contianer
+            , form: form     //(必填) layui 的 from
+            , data: mapTool(demoData,demoMap,'children')     //(必填) json数据
+        });
+
+    });
+    /**
+     *
+     * @param nodes, map,childName
+     * @returns {*|o|o}
+     */
+    function mapTool(nodes, map,childName) {
+        var data;
+        nodes = nodes || [];
+        if (nodes.length > 0) {
+            data = new Array(nodes.length)
+            for (var i = 0; i < nodes.length; i++) {
+                data[i] = {};
+                for (var field in nodes[i]) {
+                    data[i][map[field]] = field==childName? mapTool(nodes[i][childName],map):nodes[i][field];
+                }
+            }
+        }
+        return data;
+    }
+
+    /**
+     *
+     * @param xtreeId
+     * @returns {*|o|o}
+     */
+    function getChecked(xtreeId){
+        var checklist = layui.use('jquery',function () {
+            var $= layui.$;
+            var checkedList =[];
+            var inputList = $("#"+xtreeId)[0].getElementsByTagName('input');
+            for(var input of inputList){
+                input.checked?checkedList.push({'menuId':input.value,'menucode':input.title}):"";
+            }
+            console.log(checkedList);
+            return checkedList;
+        })
+        return checklist;
+    }
+
+
+</script>
