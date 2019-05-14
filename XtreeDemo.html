@@ -73,6 +73,26 @@
                 checked: false,
                 value: 'value2.1',
                 children: []
+            },{
+                menueCode: 'code2.2',
+                checked: false,
+                value: 'value2.2',
+                children: [{
+                    menueCode: 'code2.2.1',
+                    checked: false,
+                    value: 'value2.2.1',
+                    children: []
+                },{
+                    menueCode: 'code2.2.2',
+                    checked: false,
+                    value: 'value2.2.2',
+                    children: []
+                }]
+            },{
+                menueCode: 'code2.3',
+                checked: false,
+                value: 'value2.3',
+                children: []
             }]
         }];
     /*键值对映射*/
@@ -140,7 +160,7 @@
             for (var i = 0; i < nodes.length; i++) {
                 data[i] = {};
                 for (var field in nodes[i]) {
-                    data[i][map[field]] = field==childName? mapTool(nodes[i][childName],map):nodes[i][field];
+                    data[i][map[field]] = field==childName? mapTool(nodes[i][childName],map,childName):nodes[i][field];
                 }
             }
         }
