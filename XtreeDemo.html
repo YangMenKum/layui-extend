@@ -49,7 +49,6 @@
         <div id="xtree1" class="xtree_contianer"></div>
         <div id="xtree2" class="xtree_contianer"></div>
     </form>
-    <button onclick="getChecked('xtree2')">console</button>
 
 </body>
 </html>
@@ -131,8 +130,8 @@
         xtree: './layui-xtree/layui-xtree' // {/}的意思即代表采用自有路径，即不跟随 base 路径
     })
     //layui 的 form 模块是必须的
-    layui.use(['form','xtree'], function () {
-        var form = layui.form;
+    layui.use(['form','xtree','jquery'], function () {
+        var form = layui.form,$=layui.$;
 
         //1、最基础的用法 - 直接绑定json
         var xtree1 = layui.xtree({
@@ -145,6 +144,8 @@
             , form: form     //(必填) layui 的 from
             , data: mapTool(demoData,demoMap,'children')     //(必填) json数据
         });
+        var dom = $("#xtree1")[0] || "";
+        getChecked(dom);
 
     });
     /**
@@ -172,18 +173,14 @@
      * @param xtreeId
      * @returns {list}
      */
-    function getChecked(xtreeId){
-        var checklist = layui.use('jquery',function () {
-            var $= layui.$;
-            var checkedList =[];
-            var inputList = $("#"+xtreeId)[0].getElementsByTagName('input');
-            for(var input of inputList){
-                input.checked?checkedList.push({'menuId':input.value,'menucode':input.title}):"";
-            }
-            console.log(checkedList);
-            return checkedList;
-        })
-        return checklist;
+    function getChecked(dom){
+        var checkedList =[];
+        var inputList = dom.getElementsByTagName('input');
+        for(var input of inputList){
+            input.checked?checkedList.push({'menuId':input.value,'menucode':input.title}):"";
+        }
+        console.log(checkedList);
+        return checkedList;
     }
 
 
