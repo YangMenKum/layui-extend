@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="layui/css/layui.css" rel="stylesheet"/>
+    <title>LayUI tableDemo</title>
+</head>
+<body>
+<table id="demoTable" class="layui-table" lay-filter="test"></table>
+<script type="text/html" id="columnCheckBox">
+    <input type="checkbox" {{d.column03==''?'':d.column03}} lay-skin="switch" lay-filter="form-switch-03"/>
+</script>
+</body>
+</html>
+<!--先引用layui的js-->
+<script src="layui/layui.js"></script>
+<!--引用xtree-->
+<script type="text/javascript">
+    layui.use(['table', 'jquery', 'form', 'element'], function () {
+        var $ = layui.$;
+        var table = layui.table
+            , form = layui.form
+        var demoData = [{
+            'column01': 'checked'
+            , 'column02': 'value1'
+            , 'column03': 'checked'
+            , 'column04': 'value1'
+        }, {
+            'column01': ''
+            , 'column02': 'value2'
+            , 'column03': 'checked'
+            , 'column04': 'value2'
+        }, {
+            'column01': 'checked'
+            , 'column02': 'value3'
+            , 'column03': ''
+            , 'column04': 'value3'
+        }];
+        var tableHeader = [[{
+            field: 'column01'
+            , type: 'checkbox'
+        }, {
+            field: 'column02'
+            , title: 'column02'
+        }, {
+            field: 'column03'
+            , title: 'column03'
+            , templet: '#columnCheckBox'
+            , event: 'switch-03'
+        }, {
+            field: 'column04'
+            , title: 'column04'
+        }]];
+        table.config.checkName = 'column01';
+        table.render({
+            elem: '#demoTable'
+            , cols: tableHeader
+            , data: demoData
+        });
+        // 监听单元格事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            debugger
+            console.log(JSON.stringify(obj.data));
+            switch(obj.event){
+                case 'switch-03':
+                    //同步更新表格和缓存对应的值(测试无效,input的替换样式没有替换)
+                    var value = data.column03 == "checked" ? '' : 'checked';
+                    obj.update({
+                        column03: value
+                    });
+                    break;
+                default:
+                    console.error("unexpect event")
+            }
+            console.log(JSON.stringify(obj.data));
+        });
+        //表单元素监听
+        form.on('switch(form-switch-03)', function(obj){
+            var obj=obj;
+            debugger
+
+            layer.msg("done");
+        });
+
+    });
+</script>
